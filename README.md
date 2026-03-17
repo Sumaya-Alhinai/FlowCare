@@ -7,7 +7,7 @@ Queue & Appointment Booking System for FlowCare — a growing network of service
 ## 🚀 Tech Stack
 
 - ASP.NET Core 9
-- PostgreSQL 16
+- PostgreSQL 18
 - Entity Framework Core 9
 - JWT Authentication
 - Basic Authentication
