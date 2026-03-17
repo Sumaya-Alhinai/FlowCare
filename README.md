@@ -62,10 +62,10 @@ Update appsettings.json:
 
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=FlowCareDb;Username=postgres;Password=yourpassword"
+    "DefaultConnection": "Host=localhost;Port=5433;Database=FlowCareDb;Username=postgres;Password=1122"
   },
   "JwtSettings": {
-    "Key": "FlowCareSecretKey2026MustBe32CharsLong!",
+    "Key": "THIS_IS_SUPER_SECRET_KEY_123456789",
     "Issuer": "FlowCareAPI",
     "Audience": "FlowCareClients",
     "DurationInMinutes": "60"
