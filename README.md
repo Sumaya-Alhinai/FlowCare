@@ -1,50 +1,65 @@
-# FlowCare
 # FlowCare API 🏥
 
 Queue & Appointment Booking System for FlowCare — a growing network of service branches across Oman.
 
-## Tech Stack
+---
+
+## 🚀 Tech Stack
+
 - ASP.NET Core 9
 - PostgreSQL 16
 - Entity Framework Core 9
-- JWT + Basic Authentication
-- Docker + Docker Compose
+- JWT Authentication
+- Basic Authentication
+- Docker & Docker Compose
 
 ---
 
-## Setup Instructions
+## 🏗 Architecture Overview
 
-### Option 1 — Run with Docker (Recommended)
+- Clean separation of Controllers, Services, and Data layers
+- JWT-based authentication & role-based authorization
+- Entity Framework Core (Code-First)
+- Automatic database seeding
+- Background cleanup service
+- Soft delete implementation
+- Audit logging system
 
-1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
+---
+
+## ⚙ Setup Instructions
+
+### 🐳 Option 1 — Run with Docker (Recommended)
+
+1. Install Docker Desktop  
 2. Clone the repository:
+
 ```bash
 git clone https://github.com/Sumaya-Alhinai/FlowCare.git
-```
-3. Run:
-```bash
+cd FlowCare
+Run:
+
 docker-compose up --build
-```
-4. API available at: `http://localhost:8080`
 
----
+API available at:
 
-### Option 2 — Run Locally
+http://localhost:8080
+💻 Option 2 — Run Locally
+Requirements:
 
-**Requirements:**
-- .NET 9 SDK
-- PostgreSQL 16
+.NET 9 SDK
 
-**Steps:**
+PostgreSQL 16
 
-1. Clone the repository:
-```bash
-git clone https://github.com/YOUR_USERNAME/flowcare-api.git
-cd flowcare-api
-```
+Steps:
 
-2. Update `appsettings.json`:
-```json
+Clone repository:
+
+git clone https://github.com/Sumaya-Alhinai/FlowCare.git
+cd FlowCare
+
+Update appsettings.json:
+
 {
   "ConnectionStrings": {
     "DefaultConnection": "Host=localhost;Port=5432;Database=FlowCareDb;Username=postgres;Password=yourpassword"
@@ -56,194 +71,127 @@ cd flowcare-api
     "DurationInMinutes": "60"
   }
 }
-```
 
-3. Run migrations:
-```bash
+Run migrations:
+
 dotnet ef database update
-```
 
-4. Run the app:
-```bash
+Start the application:
+
 dotnet run
-```
+🌍 Environment Variables
+Variable	Description
+ConnectionStrings__DefaultConnection	PostgreSQL connection string
+JwtSettings__Key	JWT secret key (minimum 32 characters)
+JwtSettings__Issuer	Token issuer
+JwtSettings__Audience	Token audience
+JwtSettings__DurationInMinutes	Token expiration time
+🌱 Database Seeding
 
----
+Automatically runs on startup
 
-## Environment Variables
+Idempotent (no duplicate data)
 
-| Variable | Description | Example |
-|---|---|---|
-| `ConnectionStrings__DefaultConnection` | PostgreSQL connection string | `Host=db;Port=5432;...` |
-| `JwtSettings__Key` | JWT secret key (min 32 chars) | `FlowCareSecretKey...` |
-| `JwtSettings__Issuer` | JWT issuer | `FlowCareAPI` |
-| `JwtSettings__Audience` | JWT audience | `FlowCareClients` |
-| `JwtSettings__DurationInMinutes` | Token expiry in minutes | `60` |
+Includes:
 
----
+2 branches (Muscat & Suhar)
 
-## Seeding Instructions
+Service types
 
-- Database is seeded **automatically on startup** from `Seed/example.json`
-- Seeding is **idempotent** — running multiple times will not duplicate data
-- Default seed data includes:
-  - 2 branches (Muscat + Suhar)
-  - 3+ service types per branch
-  - 2+ staff per branch
-  - 1+ branch manager per branch
-  - 14 slots across multiple days
+Staff & Managers
 
----
+14 slots
 
-## Default Users
+Default system configuration
 
-| Role | Email | Password |
-|---|---|---|
-| Admin | admin@flowcare.local | Admin@123 |
-| Branch Manager (Muscat) | aisha.b@flowcare.local | Manager@123 |
-| Branch Manager (Suhar) | hamad.h@flowcare.local | Manager@123 |
-| Staff (Muscat) | salim.r@flowcare.local | Staff@123 |
-| Staff (Suhar) | nasser.m@flowcare.local | Staff@123 |
-| Customer | ahmed.h@example.com | Customer@123 |
-
----
-
-## API Endpoints
-
-### Public (No Authentication Required)
-```
-GET  /api/branches
-GET  /api/branches/{id}/services
-GET  /api/branches/{id}/slots
-GET  /api/branches/{id}/slots?serviceTypeId={id}
-GET  /api/branches/{id}/slots?date=2026-04-01
-GET  /api/branches/{id}/queue?appointmentId={id}
-```
-
-### Authentication
-```
-POST /api/auth/register   → form-data + ID image (required)
-POST /api/auth/login      → Basic Auth header
-```
-
-### Customer (Authenticated)
-```
-POST   /api/appointments/book              → form-data + optional attachment
-GET    /api/appointments                   → list my appointments
-GET    /api/appointments/{id}              → appointment details
-GET    /api/appointments/{id}/attachment   → download attachment
+👤 Default Users
+Role	Email	Password
+Admin	admin@flowcare.local
+	Admin@123
+Manager (Muscat)	aisha.b@flowcare.local
+	Manager@123
+Manager (Suhar)	hamad.h@flowcare.local
+	Manager@123
+Staff (Muscat)	salim.r@flowcare.local
+	Staff@123
+Staff (Suhar)	nasser.m@flowcare.local
+	Staff@123
+Customer	ahmed.h@example.com
+	Customer@123
+📡 API Endpoints Summary
+Public
+GET /api/branches
+GET /api/branches/{id}/services
+GET /api/branches/{id}/slots
+GET /api/branches/{id}/queue
+Authentication
+POST /api/auth/register
+POST /api/auth/login
+Customer
+POST /api/appointments/book
+GET  /api/appointments
+PUT  /api/appointments/{id}/reschedule
 DELETE /api/appointments/{id}/cancel
-PUT    /api/appointments/{id}/reschedule
-```
+Staff / Manager / Admin
+GET /api/appointments
+PUT /api/appointments/{id}/status
+Manager / Admin
+POST /api/slots
+POST /api/slots/bulk
+PUT  /api/slots/{id}
+DELETE /api/slots/{id}
+Admin Only
+GET  /api/audit-logs
+GET  /api/audit-logs/export
+POST /api/admin/cleanup
+✨ Key Features
 
-### Staff / Manager / Admin
-```
-GET /api/appointments              → role-based filtering
-PUT /api/appointments/{id}/status  → checked-in, no-show, completed
-GET /api/staff                     → Admin: all | Manager: branch-only
-GET /api/customers
-GET /api/customers/{id}
-GET /api/customers/{id}/id-image   → Admin only
-GET /api/audit-logs                → Admin: all | Manager: branch-only
-```
+Role-Based Access Control
 
-### Manager / Admin
-```
-POST   /api/slots          → create single slot
-POST   /api/slots/bulk     → create multiple slots
-PUT    /api/slots/{id}     → update slot
-DELETE /api/slots/{id}     → soft delete
-POST   /api/staff/assign   → assign staff to service
-```
+Queue Management System
 
-### Admin Only
-```
-GET  /api/slots/deleted        → view soft-deleted slots
-PUT  /api/admin/retention      → configure retention period
-POST /api/admin/cleanup        → hard delete expired slots
-GET  /api/audit-logs/export    → export as CSV
-```
+Appointment Booking with Attachments
 
----
+Soft Delete for Slots
 
-## Example API Usage (curl)
+Audit Logging
 
-### Login as Admin
-```bash
-curl -X POST http://localhost:8080/api/auth/login \
-  -H "Authorization: Basic YWRtaW5AZmxvd2NhcmUubG9jYWw6QWRtaW5AMTIz"
-```
+Rate Limiting
 
-### Register Customer
-```bash
-curl -X POST http://localhost:8080/api/auth/register \
-  -F "Name=John Doe" \
-  -F "Email=john@example.com" \
-  -F "Password=John@123" \
-  -F "Phone=+96891234567" \
-  -F "IdImage=@/path/to/image.jpg"
-```
+Background Cleanup Service
 
-### Get Branches
-```bash
-curl http://localhost:8080/api/branches
-```
+Pagination Support
 
-### Book Appointment
-```bash
-curl -X POST http://localhost:8080/api/appointments/book \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -F "SlotId=slot_mus_002"
-```
+Search Support
 
-### Get Queue Position
-```bash
-curl "http://localhost:8080/api/branches/br_muscat_001/queue?appointmentId=appt_001"
-```
+Dockerized Deployment
 
-### Export Audit Logs
-```bash
-curl http://localhost:8080/api/audit-logs/export \
-  -H "Authorization: Bearer ADMIN_TOKEN" \
-  -o audit_logs.csv
-```
+🏆 Bonus Features Implemented
 
-### Create Bulk Slots
-```bash
-curl -X POST http://localhost:8080/api/slots/bulk \
-  -H "Authorization: Bearer ADMIN_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '[
-    {
-      "BranchId": "br_muscat_001",
-      "ServiceTypeId": "svc_mus_001",
-      "StartTime": "2026-04-01T09:00:00Z",
-      "EndTime": "2026-04-01T09:15:00Z"
-    }
-  ]'
-```
+Pagination (page, size)
 
----
+Search (term)
 
-## Database Schema
+Queue Position Endpoint
 
-### Main Entities
-- **Branch** — Service locations
-- **ServiceType** — Types of services per branch
-- **Slot** — Available time slots (supports soft delete)
-- **Staff** — Employees assigned to branches
-- **Customer** — Registered customers
-- **Appointment** — Bookings linking customers to slots
-- **AuditLog** — Tamper-evident action history
-- **User** — Authentication entity (Admin/Manager/Staff/Customer)
-- **Config** — System configuration (e.g., retention period)
+Rate Limiting:
 
----
+Max 3 bookings/day
 
-## Bonus Features Implemented ✅
-- Pagination (`page` + `size`) on all listing APIs
-- Search (`term`) on all listing APIs
-- Queue Position endpoint per branch
-- Rate Limiting (max 3 bookings/day, max 2 reschedules/day)
-- Background cleanup service (runs every 24 hours automatically)
-- Docker + Docker Compose
+Max 2 reschedules/day
+
+Automatic background cleanup (every 24 hours)
+
+Fully containerized with Docker
+
+📦 Deployment Ready
+
+The project supports:
+
+Local development
+
+Docker environment
+
+Production-style architecture
+
+Scalable database design
