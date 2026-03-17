@@ -19,8 +19,7 @@ Queue & Appointment Booking System for FlowCare — a growing network of service
 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop)
 2. Clone the repository:
 ```bash
-git clone https://github.com/YOUR_USERNAME/flowcare-api.git
-cd flowcare-api
+git clone https://github.com/Sumaya-Alhinai/FlowCare.git
 ```
 3. Run:
 ```bash
